@@ -1,3 +1,5 @@
+# This is a personal annotated copy, please review the original if you come across this!
+
 ![Design Patterns For Humans](https://cloud.githubusercontent.com/assets/11269635/23065273/1b7e5938-f515-11e6-8dd3-d0d58de6bb9a.png)
 
 ***
@@ -30,7 +32,7 @@ Wikipedia describes them as
 ⚠️ Be Careful
 -----------------
 - Design patterns are not a silver bullet to all your problems.
-- Do not try to force them; bad things are supposed to happen, if done so. Keep in mind that design patterns are solutions **to** problems, not solutions **finding** problems; so don't overthink.
+- Do not try to force them. Keep in mind that design patterns are solutions **to** problems, not solutions **needing** problems; so don't overthink.
 - If used in a correct place in a correct manner, they can prove to be a savior; or else they can result in a horrible mess of a code.
 
 > Also note that the code samples below are in PHP-7, however this shouldn't stop you because the concepts are same anyways. Plus the **support for other languages is underway**.
@@ -73,14 +75,19 @@ Wikipedia says
 
 First of all we have a door interface and the implementation
 ```php
-interface Door
+// Defines the sorts of functions a 'Door' will have in a public manner
+interface Door  
 {
+    // PHP 7 allows for giving the type a function returns in an interface
     public function getWidth(): float;
     public function getHeight(): float;
 }
 
 class WoodenDoor implements Door
 {
+    // Why would this be protected?
+    // Privately this example should work, no?
+    // Update, checked that this is fine.
     protected $width;
     protected $height;
 
@@ -118,9 +125,19 @@ echo 'Width: ' . $door->getWidth();
 echo 'Height: ' . $door->getHeight();
 ```
 
+*I think this example demonstrates how but not why...or maybe not as well. For example, for the above snippet this would also work:*
+```php
+$door = new WoodenDoor(100,200);
+echo 'Width: ' . $door->getWidth();
+echo 'Height: ' . $door->getHeight();
+```
+* This is actually less text and is no less clear since there's no reference to what these parameters are in the declaration. *
+
 **When to Use?**
 
 When creating an object is not just a few assignments and involves some logic, it makes sense to put it in a dedicated factory instead of repeating the same code everywhere.
+
+*I think I should ask someone for a more robust example. I think I get the intention, but I don't know if there's a 'small' example where this is effective?*
 
 🏭 Factory Method
 --------------

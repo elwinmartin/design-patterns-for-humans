@@ -131,7 +131,7 @@ $door = new WoodenDoor(100,200);
 echo 'Width: ' . $door->getWidth();
 echo 'Height: ' . $door->getHeight();
 ```
-* This is actually less text and is no less clear since there's no reference to what these parameters are in the declaration. *
+*This is actually less text and is no less clear since there's no reference to what these parameters are in the declaration.*
 
 **When to Use?**
 

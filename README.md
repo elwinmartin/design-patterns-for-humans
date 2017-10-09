@@ -355,10 +355,10 @@ When there are interrelated dependencies with not-that-simple creation logic inv
 👷 Builder
 --------------------------------------------
 Real world example
-> Imagine you are at Hardee's and you order a specific deal, lets say, "Big Hardee" and they hand it over to you without *any questions*; this is the example of simple factory. But there are cases when the creation logic might involve more steps. For example you want a customized Subway deal, you have several options in how your burger is made e.g what bread do you want? what types of sauces would you like? What cheese would you want? etc. In such cases builder pattern comes to the rescue.
+> Imagine you are at Hardee's and you order a specific item, lets say, a "Big Hardee" burger and they hand it over to you without *any questions*; this is the example of simple factory. There are cases when the creation logic might involve more steps, however. For example, if you want to order a sandwich from Subway, you have several options for how your sandwhich is constructed leading to a variety of questions: What bread do you want? What types of sauces would you like? What cheese would you want? etc. In such cases builder pattern comes to the rescue.
 
 In plain words
-> Allows you to create different flavors of an object while avoiding constructor pollution. Useful when there could be several flavors of an object. Or when there are a lot of steps involved in creation of an object.
+> Allows you to create different variants of an object while avoiding constructor pollution. Useful when there could be several flavors of an object. Or when there are a lot of steps involved in creation of an object.
 
 Wikipedia says
 > The builder pattern is an object creation software design pattern with the intentions of finding a solution to the telescoping constructor anti-pattern.
@@ -371,7 +371,7 @@ public function __construct($size, $cheese = true, $pepperoni = true, $tomato = 
 }
 ```
 
-As you can see; the number of constructor parameters can quickly get out of hand and it might become difficult to understand the arrangement of parameters. Plus this parameter list could keep on growing if you would want to add more options in future. This is called telescoping constructor anti-pattern.
+As you can see; the number of constructor parameters can quickly get out of hand and it might become difficult to understand the arrangement of parameters (the ordering, in particular!). Plus this parameter list could keep on growing if you would want to add more options in future. This is called telescoping constructor *anti-*pattern.
 
 **Programmatic Example**
 
@@ -380,14 +380,14 @@ The sane alternative is to use the builder pattern. First of all we have our bur
 ```php
 class Burger
 {
-    protected $size;
+    protected $size; // The burger constructor is going to require size
 
-    protected $cheese = false;
+    protected $cheese = false; // but not any of these items with default
     protected $pepperoni = false;
     protected $lettuce = false;
     protected $tomato = false;
 
-    public function __construct(BurgerBuilder $builder)
+    public function __construct(BurgerBuilder $builder) // requires builder..
     {
         $this->size = $builder->size;
         $this->cheese = $builder->cheese;
@@ -410,15 +410,15 @@ class BurgerBuilder
     public $lettuce = false;
     public $tomato = false;
 
-    public function __construct(int $size)
+    public function __construct(int $size) // here is where the size comes back
     {
         $this->size = $size;
     }
 
-    public function addPepperoni()
+    public function addPepperoni() // this is a sort of getter/setter method
     {
         $this->pepperoni = true;
-        return $this;
+        return $this; // important for the cool method chain show in the implementation / example below
     }
 
     public function addLettuce()
@@ -436,12 +436,12 @@ class BurgerBuilder
     public function addTomato()
     {
         $this->tomato = true;
-        return $this;
+        return $this; 
     }
 
     public function build(): Burger
     {
-        return new Burger($this);
+        return new Burger($this); // Burger's constructor requires a Burger Builder so this make sense
     }
 }
 ```
@@ -454,18 +454,20 @@ $burger = (new BurgerBuilder(14))
                     ->addTomato()
                     ->build();
 ```
+*brief aside: while the syntax above is definitely more elegant, the point may come across more clearly as shown below*
+```php
+$burger = (new BurgerBuilder(14))->addPepperoni()->addLettuce()->addTomato()->build();
+```
+*This chain of method calls would be ridiculous in most cases, but since each returns $self, we're safe.*
 
 **When to use?**
 
-When there could be several flavors of an object and to avoid the constructor telescoping. The key difference from the factory pattern is that; factory pattern is to be used when the creation is a one step process while builder pattern is to be used when the creation is a multi step process.
+When there could be several flavors of an object and to avoid the constructor telescoping. The key difference from the factory pattern is that; factory pattern is to be used when the creation is a one step process while builder pattern is to be used when the creation is a multi-step process. *Builders also allow for flexibility in the order of those steps!*
 
-🐑 Prototype
+Prototype
 ------------
-Real world example
-> Remember dolly? The sheep that was cloned! Lets not get into the details but the key point here is that it is all about cloning
-
 In plain words
-> Create object based on an existing object through cloning.
+> Create object based on an existing object by copying it.
 
 Wikipedia says
 > The prototype pattern is a creational design pattern in software development. It is used when the type of objects to create is determined by a prototypical instance, which is cloned to produce new objects.

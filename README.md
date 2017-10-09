@@ -476,11 +476,13 @@ In short, it allows you to create a copy of an existing object and modify it to 
 
 **Programmatic Example**
 
-In PHP, it can be easily done using `clone`
+In PHP, it can be easily done using the language construct `clone`
 
 ```php
 class Sheep
 {
+    // Note: there is no __clone method, though there could be, but this still works.
+    // Clone methods give more control, but are not required to clone an object.
     protected $name;
     protected $category;
 
@@ -518,22 +520,25 @@ echo $original->getName(); // Jolly
 echo $original->getCategory(); // Mountain Sheep
 
 // Clone and modify what is required
-$cloned = clone $original;
+$cloned = clone $original; // Note: this keyword is required even if a __clone method exists as they cannot be called directly
 $cloned->setName('Dolly');
 echo $cloned->getName(); // Dolly
 echo $cloned->getCategory(); // Mountain sheep
 ```
 
-Also you could use the magic method `__clone` to modify the cloning behavior.
+Also you could use the magic method `__clone` to modify the cloning behavior. *PHP's docs give an example; their use case is tracking the number of clones by incrementing a property while cloning.*
 
 **When to use?**
 
 When an object is required that is similar to existing object or when the creation would be expensive as compared to cloning.
 
+*Question: when is creation vs cloning expensive? Does memory usage from cloning depend on language? Is it expensive, instead, in time?*
+
+
 💍 Singleton
 ------------
 Real world example
-> There can only be one president of a country at a time. The same president has to be brought to action, whenever duty calls. President here is singleton.
+> There can only be one president of a country at a time.
 
 In plain words
 > Ensures that only one object of a particular class is ever created.
@@ -541,13 +546,13 @@ In plain words
 Wikipedia says
 > In software engineering, the singleton pattern is a software design pattern that restricts the instantiation of a class to one object. This is useful when exactly one object is needed to coordinate actions across the system.
 
-Singleton pattern is actually considered an anti-pattern and overuse of it should be avoided. It is not necessarily bad and could have some valid use-cases but should be used with caution because it introduces a global state in your application and change to it in one place could affect in the other areas and it could become pretty difficult to debug. The other bad thing about them is it makes your code tightly coupled plus mocking the singleton could be difficult.
+Singleton pattern can be considered an anti-pattern and overuse should be avoided. It is not intrinsically bad and can have valid use-cases, but it should be used with caution because it introduces a global state in your application. Trying to change it in one place could yield side-effects in other areas and become difficult to debug. The also make your code tightly coupled plus mocking the singleton could be difficult. *Note/question: not totally sure if tightly coupled is a bad thing? Not sure what impact it would have on mock singletons. I am assuming these are for something akin to testing?*
 
 **Programmatic Example**
 
-To create a singleton, make the constructor private, disable cloning, disable extension and create a static variable to house the instance
+To create a singleton, make the constructor private, disable cloning, disable extension and create a static variable to house the instance:
 ```php
-final class President
+final class President // "final class president" sounds either ominous or a weird SGA title...not sure how this works yet.
 {
     private static $instance;
 
@@ -565,12 +570,12 @@ final class President
         return self::$instance;
     }
 
-    private function __clone()
+    private function __clone() //note: PHP allows functions without a return statement, so I guess this make sense?
     {
         // Disable cloning
     }
 
-    private function __wakeup()
+    private function __wakeup() //note: it says disable serialize but I don't know what this method does yet?
     {
         // Disable unserialize
     }
